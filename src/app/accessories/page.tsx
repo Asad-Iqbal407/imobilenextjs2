@@ -3,14 +3,17 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { accessories } from './data';
+import { accessories, categories } from './data';
 import { addToCartItem } from '../../lib/cart';
 
 export default function Accessories() {
+  const [selectedMainCategories, setSelectedMainCategories] = useState<string[]>([]);
+  const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([]);
   const [selectedPriceRange, setSelectedPriceRange] = useState<string[]>([]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState('featured');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
 
   const searchParams = useSearchParams();
 
@@ -24,8 +27,19 @@ export default function Accessories() {
 
   // Filter and sort accessories
   const filteredAccessories = accessories.filter(accessory => {
+    // Check if accessory belongs to selected main categories
+    const mainCategoryMatch = selectedMainCategories.length === 0 ||
+      selectedMainCategories.some(mainCat => {
+        const categoryData = categories.find(cat => cat.name === mainCat);
+        return categoryData && categoryData.subcategories.includes(accessory.category);
+      });
+
+    // Check subcategory match
+    const subcategoryMatch = selectedSubcategories.length === 0 ||
+      selectedSubcategories.includes(accessory.category);
+
     const brandMatch = selectedBrands.length === 0 || selectedBrands.includes(accessory.brand);
-    const categoryMatch = selectedCategory === '' ||
+    const urlCategoryMatch = selectedCategory === '' ||
       accessory.category.toLowerCase().includes(selectedCategory.toLowerCase()) ||
       accessory.name.toLowerCase().includes(selectedCategory.toLowerCase());
 
@@ -47,7 +61,7 @@ export default function Accessories() {
       });
     }
 
-    return brandMatch && categoryMatch && priceMatch;
+    return mainCategoryMatch && subcategoryMatch && brandMatch && urlCategoryMatch && priceMatch;
   });
 
   const sortedAccessories = [...filteredAccessories].sort((a, b) => {
@@ -70,6 +84,30 @@ export default function Accessories() {
       prev.includes(range)
         ? prev.filter(r => r !== range)
         : [...prev, range]
+    );
+  };
+
+  const handleMainCategoryChange = (category: string) => {
+    setSelectedMainCategories(prev =>
+      prev.includes(category)
+        ? prev.filter(c => c !== category)
+        : [...prev, category]
+    );
+  };
+
+  const toggleCategoryExpansion = (category: string) => {
+    setExpandedCategories(prev =>
+      prev.includes(category)
+        ? prev.filter(c => c !== category)
+        : [...prev, category]
+    );
+  };
+
+  const handleSubcategoryChange = (subcategory: string) => {
+    setSelectedSubcategories(prev =>
+      prev.includes(subcategory)
+        ? prev.filter(s => s !== subcategory)
+        : [...prev, subcategory]
     );
   };
 
@@ -100,6 +138,44 @@ export default function Accessories() {
           {/* Sidebar */}
           <div className="lg:w-1/4">
             <div className="bg-white rounded-lg shadow-md p-6">
+              <h2 className="text-lg font-semibold mb-4">Categories</h2>
+              <div className="space-y-2 mb-6">
+                {categories.map((category) => (
+                  <div key={category.name}>
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="mr-2"
+                        checked={selectedMainCategories.includes(category.name)}
+                        onChange={() => handleMainCategoryChange(category.name)}
+                      />
+                      <span className="font-medium">{category.name}</span>
+                      <button
+                        onClick={() => toggleCategoryExpansion(category.name)}
+                        className="ml-auto text-gray-500 hover:text-gray-700"
+                      >
+                        {expandedCategories.includes(category.name) ? '▼' : '▶'}
+                      </button>
+                    </label>
+                    {expandedCategories.includes(category.name) && (
+                      <div className="ml-6 mt-2 space-y-1">
+                        {category.subcategories.map((subcategory) => (
+                          <label key={subcategory} className="flex items-center cursor-pointer">
+                            <input
+                              type="checkbox"
+                              className="mr-2"
+                              checked={selectedSubcategories.includes(subcategory)}
+                              onChange={() => handleSubcategoryChange(subcategory)}
+                            />
+                            <span className="text-sm text-gray-600">{subcategory}</span>
+                          </label>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+
               <div className="mt-8">
                 <h3 className="text-lg font-semibold mb-4">Price Range</h3>
                 <div className="space-y-2">

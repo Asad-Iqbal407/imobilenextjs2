@@ -8,17 +8,30 @@ export default function Gadgets() {
   const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([]);
   const [selectedPriceRange, setSelectedPriceRange] = useState<string[]>([]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState('featured');
 
-  const categoryData = categories.find(cat => cat.name === "Gadgets");
+  // Get all unique categories from accessories
+  const allCategories = [...new Set(accessories.map(acc => acc.category))];
 
-  // Filter accessories for this category
-  const categoryAccessories = accessories.filter(accessory =>
-    categoryData?.subcategories.some(sub =>
-      accessory.category.toLowerCase().includes(sub.toLowerCase()) ||
-      accessory.name.toLowerCase().includes(sub.toLowerCase())
-    )
-  );
+  // Filter accessories based on selected categories or default to this category's subcategories
+  const getFilteredAccessories = () => {
+    if (selectedCategories.length > 0) {
+      // Filter by selected categories
+      return accessories.filter(accessory => selectedCategories.includes(accessory.category));
+    } else {
+      // Default to this category's subcategories
+      const categoryData = categories.find(cat => cat.name === "Gadgets");
+      return accessories.filter(accessory =>
+        categoryData?.subcategories.some(sub =>
+          accessory.category.toLowerCase().includes(sub.toLowerCase()) ||
+          accessory.name.toLowerCase().includes(sub.toLowerCase())
+        )
+      );
+    }
+  };
+
+  const categoryAccessories = getFilteredAccessories();
 
   // Apply additional filters
   const filteredAccessories = categoryAccessories.filter(accessory => {
@@ -88,6 +101,14 @@ export default function Gadgets() {
     );
   };
 
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategories(prev =>
+      prev.includes(category)
+        ? prev.filter(c => c !== category)
+        : [...prev, category]
+    );
+  };
+
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Header */}
@@ -107,19 +128,37 @@ export default function Gadgets() {
           {/* Sidebar */}
           <div className="lg:w-1/4">
             <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-lg font-semibold mb-4">Subcategories</h2>
-              <div className="space-y-2">
-                {categoryData?.subcategories.map((subcategory) => (
-                  <label key={subcategory} className="flex items-center">
+              <h2 className="text-lg font-semibold mb-4">Categories</h2>
+              <div className="space-y-2 mb-6">
+                {allCategories.map((category) => (
+                  <label key={category} className="flex items-center">
                     <input
                       type="checkbox"
                       className="mr-2"
-                      checked={selectedSubcategories.includes(subcategory)}
-                      onChange={() => handleSubcategoryChange(subcategory)}
+                      checked={selectedCategories.includes(category)}
+                      onChange={() => handleCategoryChange(category)}
                     />
-                    <span>{subcategory}</span>
+                    <span>{category}</span>
                   </label>
                 ))}
+              </div>
+
+              <h2 className="text-lg font-semibold mb-4">Subcategories</h2>
+              <div className="space-y-2">
+                {(() => {
+                  const categoryData = categories.find(cat => cat.name === "Gadgets");
+                  return categoryData?.subcategories.map((subcategory: string) => (
+                    <label key={subcategory} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        className="mr-2"
+                        checked={selectedSubcategories.includes(subcategory)}
+                        onChange={() => handleSubcategoryChange(subcategory)}
+                      />
+                      <span>{subcategory}</span>
+                    </label>
+                  ));
+                })()}
               </div>
 
               <div className="mt-8">
@@ -204,7 +243,13 @@ export default function Gadgets() {
               {sortedAccessories.map((accessory) => (
                 <div key={accessory.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="p-6">
-                    <div className="text-5xl mb-4 text-center">{accessory.image}</div>
+                    <div className="w-full h-48 mb-4 overflow-hidden rounded-lg">
+                      <img
+                        src={accessory.image}
+                        alt={accessory.name}
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
 
                     <div className="mb-3">
                       <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">

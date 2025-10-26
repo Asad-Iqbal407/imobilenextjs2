@@ -54,14 +54,19 @@ export default function Navigation() {
             <Link href="/accessories" className="text-gray-700 hover:text-blue-600 transition-colors">
               Accessories
             </Link>
+            <Link href="/admin" className="text-gray-700 hover:text-blue-600 transition-colors">
+              Admin
+            </Link>
 
             {/* Cart Icon */}
             <Link href="/cart" className="relative text-gray-700 hover:text-blue-600 transition-colors">
               <div className="flex items-center">
                 <span className="text-2xl">🛒</span>
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {cartCount > 99 ? '99+' : cartCount}
-                </span>
+                {cartCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {cartCount > 99 ? '99+' : cartCount}
+                  </span>
+                )}
               </div>
             </Link>
           </div>
@@ -71,9 +76,11 @@ export default function Navigation() {
             <Link href="/cart" className="relative text-gray-700 hover:text-blue-600 transition-colors">
               <div className="flex items-center">
                 <span className="text-xl">🛒</span>
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center text-[10px]">
-                  {cartCount > 99 ? '99+' : cartCount}
-                </span>
+                {cartCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center text-[10px]">
+                    {cartCount > 99 ? '99+' : cartCount}
+                  </span>
+                )}
               </div>
             </Link>
 
@@ -129,7 +136,7 @@ export default function Navigation() {
                 className="block px-3 py-2 text-gray-700 hover:text-blue-600 transition-colors"
                 onClick={() => setIsOpen(false)}
               >
-                Cart ({cartCount})
+                Cart {cartCount > 0 && `(${cartCount})`}
               </Link>
             </div>
           </div>

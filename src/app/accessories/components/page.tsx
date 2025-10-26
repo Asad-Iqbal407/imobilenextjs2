@@ -96,7 +96,7 @@ export default function Components() {
           <div className="text-center">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">Components</h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              High-quality phone components and replacement parts.
+              Essential components and parts for your devices and repairs.
             </p>
           </div>
         </div>
@@ -167,7 +167,7 @@ export default function Components() {
               <div className="mt-8">
                 <h3 className="text-lg font-semibold mb-4">Brands</h3>
                 <div className="space-y-2">
-                  {["Generic", "Canon", "Anker"].map((brand) => (
+                  {["Canon", "Anker", "Generic"].map((brand) => (
                     <label key={brand} className="flex items-center">
                       <input
                         type="checkbox"
@@ -204,7 +204,13 @@ export default function Components() {
               {sortedAccessories.map((accessory) => (
                 <div key={accessory.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="p-6">
-                    <div className="text-5xl mb-4 text-center">{accessory.image}</div>
+                    <div className="w-full h-48 mb-4 overflow-hidden rounded-lg">
+                      <img
+                        src={accessory.image}
+                        alt={accessory.name}
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
 
                     <div className="mb-3">
                       <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { accessories, categories } from '../data';
+import { addToCartItem } from '../../../lib/cart';
 
 export default function SmartphonesCellPhones() {
   const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([]);
@@ -93,9 +94,9 @@ export default function SmartphonesCellPhones() {
       <section className="bg-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Smartphones & Cell Phones</h1>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">Smartphones/Cell Phones</h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Discover the latest smartphones and cell phone accessories. Quality products at competitive prices.
+              Accessories and parts for smartphones and cell phones.
             </p>
           </div>
         </div>
@@ -258,50 +259,19 @@ export default function SmartphonesCellPhones() {
 
                     <div className="flex gap-2">
                       <button
+                        onClick={() => accessory.inStock && addToCartItem(accessory)}
                         className={`flex-1 py-2 px-4 rounded-lg font-semibold transition-colors ${
                           accessory.inStock
                             ? 'bg-blue-600 text-white hover:bg-blue-700'
                             : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                         }`}
                         disabled={!accessory.inStock}
-                        onClick={() => {
-                          if (accessory.inStock) {
-                            // Add to cart logic
-                            const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
-                            const existingItem = currentCart.find((item: any) => item.id === accessory.id);
-
-                            if (existingItem) {
-                              existingItem.quantity += 1;
-                            } else {
-                              currentCart.push({
-                                id: accessory.id,
-                                name: accessory.name,
-                                price: accessory.price,
-                                originalPrice: accessory.originalPrice,
-                                brand: accessory.brand,
-                                image: accessory.image,
-                                quantity: 1,
-                                category: accessory.category
-                              });
-                            }
-
-                            localStorage.setItem('cart', JSON.stringify(currentCart));
-                            // Dispatch custom event to update navigation
-                            setTimeout(() => {
-                              window.dispatchEvent(new Event('cartUpdated'));
-                            }, 100);
-                            alert(`${accessory.name} added to cart!`);
-                          }
-                        }}
                       >
                         {accessory.inStock ? 'Add to Cart' : 'Out of Stock'}
                       </button>
-                      <a
-                        href="/cart"
-                        className="px-4 py-2 border border-gray-300 rounded-lg hover:border-blue-500 transition-colors"
-                      >
-                        🛒
-                      </a>
+                      <button className="px-4 py-2 border border-gray-300 rounded-lg hover:border-blue-500 transition-colors">
+                        ❤️
+                      </button>
                     </div>
                   </div>
                 </div>

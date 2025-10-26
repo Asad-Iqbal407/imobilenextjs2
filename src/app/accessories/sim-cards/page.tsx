@@ -96,7 +96,7 @@ export default function SimCards() {
           <div className="text-center">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">SIM Cards</h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Stay connected with reliable SIM cards and data solutions.
+              Stay connected with our range of SIM cards and connectivity solutions.
             </p>
           </div>
         </div>
@@ -204,7 +204,13 @@ export default function SimCards() {
               {sortedAccessories.map((accessory) => (
                 <div key={accessory.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="p-6">
-                    <div className="text-5xl mb-4 text-center">{accessory.image}</div>
+                    <div className="w-full h-48 mb-4 overflow-hidden rounded-lg">
+                      <img
+                        src={accessory.image}
+                        alt={accessory.name}
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
 
                     <div className="mb-3">
                       <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">

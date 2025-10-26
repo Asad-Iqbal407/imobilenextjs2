@@ -73,11 +73,7 @@ export const categories: Category[] = [
       "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=400&h=300&fit=crop",
       "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400&h=300&fit=crop",
       "https://images.unsplash.com/photo-1527814050087-3793815479db?w=400&h=300&fit=crop",
-      "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400&h=300&fit=crop",
-      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=300&fit=crop",
-      "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=400&h=300&fit=crop",
-      "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400&h=300&fit=crop",
-      "https://images.unsplash.com/photo-1527814050087-3793815479db?w=400&h=300&fit=crop"
+      "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400&h=300&fit=crop"
     ],
     subcategories: ["Adapters", "Bag for Laptop", "Display For Laptop", "Keyboard", "Mouse", "View More"]
   }

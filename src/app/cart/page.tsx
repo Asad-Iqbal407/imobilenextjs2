@@ -65,13 +65,21 @@ export default function Cart() {
 
   const removeFromCart = async (productId: number) => {
     try {
+      // Update localStorage immediately for UI responsiveness
+      const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const updatedCart = currentCart.filter((i: any) => i.id !== productId);
+      localStorage.setItem('cart', JSON.stringify(updatedCart));
+      window.dispatchEvent(new Event('cartUpdated'));
+
+      // Then update database
       await fetch(`/api/cart?productId=${productId}`, {
         method: 'DELETE',
       });
       loadCart();
-      window.dispatchEvent(new Event('cartUpdated'));
     } catch (error) {
       console.error('Error removing from cart:', error);
+      // Revert localStorage change if API call failed
+      loadCart();
     }
   };
 
@@ -82,6 +90,16 @@ export default function Cart() {
     }
 
     try {
+      // Update localStorage immediately for UI responsiveness
+      const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const existing = currentCart.find((i: any) => i.id === productId);
+      if (existing) {
+        existing.quantity = newQuantity;
+        localStorage.setItem('cart', JSON.stringify(currentCart));
+        window.dispatchEvent(new Event('cartUpdated'));
+      }
+
+      // Then update database
       await fetch('/api/cart', {
         method: 'PUT',
         headers: {
@@ -90,9 +108,10 @@ export default function Cart() {
         body: JSON.stringify({ productId, quantity: newQuantity }),
       });
       loadCart();
-      window.dispatchEvent(new Event('cartUpdated'));
     } catch (error) {
       console.error('Error updating cart:', error);
+      // Revert localStorage change if API call failed
+      loadCart();
     }
   };
 

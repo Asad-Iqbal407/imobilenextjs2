@@ -3,6 +3,18 @@ import clientPromise from '@/app/lib/mongodb';
 import { writeFile } from 'fs/promises';
 import path from 'path';
 
+export async function GET() {
+  try {
+    const client = await clientPromise;
+    const db = client.db('imobilenext');
+    const contacts = await db.collection('repairing').find({}).sort({ createdAt: -1 }).toArray();
+    return NextResponse.json(contacts);
+  } catch (error) {
+    console.error('Error fetching contacts:', error);
+    return NextResponse.json({ error: 'Failed to fetch contacts' }, { status: 500 });
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();

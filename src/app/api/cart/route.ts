@@ -74,7 +74,17 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Product ID is required' }, { status: 400 });
     }
 
-    await db.collection('cart').deleteOne({ productId });
+    // Try to delete by string productId first, then by numeric productId
+    let result = await db.collection('cart').deleteOne({ productId });
+
+    if (result.deletedCount === 0) {
+      // Try with numeric productId
+      result = await db.collection('cart').deleteOne({ productId: parseInt(productId) });
+    }
+
+    if (result.deletedCount === 0) {
+      return NextResponse.json({ error: 'Item not found in cart' }, { status: 404 });
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {

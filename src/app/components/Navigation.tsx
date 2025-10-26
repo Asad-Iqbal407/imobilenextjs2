@@ -1,10 +1,34 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
+
+  // Update cart count from localStorage
+  useEffect(() => {
+    const updateCartCount = () => {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const count = cart.reduce((total: number, item: any) => total + item.quantity, 0);
+      setCartCount(count);
+    };
+
+    updateCartCount();
+
+    // Listen for storage changes
+    const handleStorageChange = () => updateCartCount();
+    window.addEventListener('storage', handleStorageChange);
+
+    // Custom event for cart updates
+    window.addEventListener('cartUpdated', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('cartUpdated', handleStorageChange);
+    };
+  }, []);
 
   return (
     <nav className="bg-white shadow-lg">
@@ -22,18 +46,37 @@ export default function Navigation() {
               Home
             </Link>
             <Link href="/services" className="text-gray-700 hover:text-blue-600 transition-colors">
-              Services
+              Repairs
             </Link>
-            <Link href="/about" className="text-gray-700 hover:text-blue-600 transition-colors">
-              About
+            <Link href="/phones" className="text-gray-700 hover:text-blue-600 transition-colors">
+              Phones
             </Link>
-            <Link href="/contact" className="text-gray-700 hover:text-blue-600 transition-colors">
-              Contact
+            <Link href="/accessories" className="text-gray-700 hover:text-blue-600 transition-colors">
+              Accessories
+            </Link>
+
+            {/* Cart Icon */}
+            <Link href="/cart" className="relative text-gray-700 hover:text-blue-600 transition-colors">
+              <div className="flex items-center">
+                <span className="text-2xl">🛒</span>
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {cartCount > 99 ? '99+' : cartCount}
+                </span>
+              </div>
             </Link>
           </div>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
+          {/* Mobile menu button and cart */}
+          <div className="md:hidden flex items-center space-x-4">
+            <Link href="/cart" className="relative text-gray-700 hover:text-blue-600 transition-colors">
+              <div className="flex items-center">
+                <span className="text-xl">🛒</span>
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center text-[10px]">
+                  {cartCount > 99 ? '99+' : cartCount}
+                </span>
+              </div>
+            </Link>
+
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="text-gray-700 hover:text-blue-600 focus:outline-none"
@@ -65,21 +108,28 @@ export default function Navigation() {
                 className="block px-3 py-2 text-gray-700 hover:text-blue-600 transition-colors"
                 onClick={() => setIsOpen(false)}
               >
-                Services
+                Repairs
               </Link>
               <Link
-                href="/about"
+                href="/phones"
                 className="block px-3 py-2 text-gray-700 hover:text-blue-600 transition-colors"
                 onClick={() => setIsOpen(false)}
               >
-                About
+                Phones
               </Link>
               <Link
-                href="/contact"
+                href="/accessories"
                 className="block px-3 py-2 text-gray-700 hover:text-blue-600 transition-colors"
                 onClick={() => setIsOpen(false)}
               >
-                Contact
+                Accessories
+              </Link>
+              <Link
+                href="/cart"
+                className="block px-3 py-2 text-gray-700 hover:text-blue-600 transition-colors"
+                onClick={() => setIsOpen(false)}
+              >
+                Cart ({cartCount})
               </Link>
             </div>
           </div>

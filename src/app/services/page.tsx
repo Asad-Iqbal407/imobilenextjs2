@@ -90,9 +90,12 @@ export default function Services() {
                     </li>
                   ))}
                 </ul>
-                <button className="w-full mt-6 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+                <a
+                  href="/contact"
+                  className="w-full mt-6 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors block text-center"
+                >
                   Get Quote
-                </button>
+                </a>
               </div>
             ))}
           </div>
